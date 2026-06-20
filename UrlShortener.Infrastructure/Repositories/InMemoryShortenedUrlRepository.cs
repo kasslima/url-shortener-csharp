@@ -8,20 +8,24 @@ public class InMemoryShortenedUrlRepository : IShortenedUrlRepository
 {
     private readonly ConcurrentDictionary<string, ShortenedUrl> _urls = new();
 
-    public bool Add(ShortenedUrl shortenedUrl)
+    public Task<bool> AddAsync( ShortenedUrl shortenedUrl, CancellationToken cancellationToken = default)
     {
-        return _urls.TryAdd(shortenedUrl.Code, shortenedUrl);
+        var added = _urls.TryAdd(shortenedUrl.Code, shortenedUrl);
+
+        return Task.FromResult(added);
     }
 
-    public ShortenedUrl? GetByCode(string code)
+    public Task<ShortenedUrl?> GetByCodeAsync( string code, CancellationToken cancellationToken = default)
     {
         _urls.TryGetValue(code, out var shortenedUrl);
 
-        return shortenedUrl;
+        return Task.FromResult(shortenedUrl);
     }
 
-    public bool Delete(string code)
+    public Task<bool> DeleteAsync( string code, CancellationToken cancellationToken = default)  
     {
-        return _urls.TryRemove(code, out _);
+        var deleted = _urls.TryRemove(code, out _);
+
+        return Task.FromResult(deleted);
     }
 }

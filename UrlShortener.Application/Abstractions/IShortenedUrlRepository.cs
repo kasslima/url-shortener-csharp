@@ -4,7 +4,9 @@ namespace UrlShortener.Application.Abstractions;
 
 public interface IShortenedUrlRepository
 {
-    bool Add(ShortenedUrl shortenedUrl);
-    ShortenedUrl? GetByCode(string code);
-    bool Delete(string code);
+    Task<bool> AddAsync( ShortenedUrl shortenedUrl, CancellationToken cancellationToken = default);
+
+    Task<ShortenedUrl?> GetByCodeAsync( string code, CancellationToken cancellationToken = default);
+
+    Task<bool> DeleteAsync( string code, CancellationToken cancellationToken = default);
 }

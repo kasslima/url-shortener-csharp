@@ -7,14 +7,15 @@ public class GetShortenedUrlUseCase
 {
     private readonly IShortenedUrlRepository _repository;
 
-    public GetShortenedUrlUseCase(
-        IShortenedUrlRepository repository)
+    public GetShortenedUrlUseCase(IShortenedUrlRepository repository)
     {
         _repository = repository;
     }
 
-    public ShortenedUrl? Execute(string code)
+    public Task<ShortenedUrl?> ExecuteAsync(
+        string code,
+        CancellationToken cancellationToken = default)
     {
-        return _repository.GetByCode(code);
+        return _repository.GetByCodeAsync(code, cancellationToken);
     }
 }

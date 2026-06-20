@@ -16,11 +16,16 @@ public class UrlsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Create(CreateShortenedUrlRequest request)
+    public async Task<IActionResult> Create(
+        CreateShortenedUrlRequest request,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var shortenedUrl = _createUseCase.Execute(request.Url);
+            var shortenedUrl = await _createUseCase.ExecuteAsync(
+                request.Url,
+                cancellationToken
+            );
 
             var shortUrl =
                 $"{Request.Scheme}://{Request.Host}/{shortenedUrl.Code}";

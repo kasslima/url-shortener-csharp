@@ -7,9 +7,8 @@ namespace UrlShortener.Tests.Application;
 public class CreateShortenedUrlUseCaseTests
 {
     [Fact]
-    public void Execute_WithValidUrl_ShouldCreateAndStoreShortenedUrl()
+    public async Task Execute_WithValidUrl_ShouldCreateAndStoreShortenedUrl()
     {
-        // Arrange
         var repository = new FakeRepository();
         var codeGenerator = new FakeCodeGenerator("abc1234");
         var timeProvider = new FakeTimeProvider(
@@ -22,14 +21,15 @@ public class CreateShortenedUrlUseCaseTests
             timeProvider
         );
 
-        // Act
-        var result = useCase.Execute("https://google.com");
+        var result = await useCase.ExecuteAsync("https://google.com");
 
-        // Assert
         Assert.Equal("abc1234", result.Code);
         Assert.Equal("https://google.com", result.OriginalUrl);
         Assert.Equal(timeProvider.GetUtcNow(), result.CreatedAt);
-        Assert.Same(result, repository.GetByCode("abc1234"));
+
+        var stored = await repository.GetByCodeAsync("abc1234");
+
+        Assert.Same(result, stored);
     }
 }
 
@@ -37,21 +37,29 @@ internal class FakeRepository : IShortenedUrlRepository
 {
     private readonly Dictionary<string, ShortenedUrl> _urls = [];
 
-    public bool Add(ShortenedUrl shortenedUrl)
+    public Task<bool> AddAsync(
+        ShortenedUrl shortenedUrl,
+        CancellationToken cancellationToken = default)
     {
-        return _urls.TryAdd(shortenedUrl.Code, shortenedUrl);
+        return Task.FromResult(
+            _urls.TryAdd(shortenedUrl.Code, shortenedUrl)
+        );
     }
 
-    public ShortenedUrl? GetByCode(string code)
+    public Task<ShortenedUrl?> GetByCodeAsync(
+        string code,
+        CancellationToken cancellationToken = default)
     {
         _urls.TryGetValue(code, out var shortenedUrl);
 
-        return shortenedUrl;
+        return Task.FromResult(shortenedUrl);
     }
 
-    public bool Delete(string code)
+    public Task<bool> DeleteAsync(
+        string code,
+        CancellationToken cancellationToken = default)
     {
-        return _urls.Remove(code);
+        return Task.FromResult(_urls.Remove(code));
     }
 }
 

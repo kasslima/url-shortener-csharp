@@ -2,9 +2,14 @@
 
 public class ShortenedUrl
 {
-    public string Code { get; }
-    public string OriginalUrl { get; }
-    public DateTimeOffset CreatedAt { get; }
+    public string Code { get; private set; } = string.Empty;
+    public string OriginalUrl { get; private set; } = string.Empty;
+    public DateTimeOffset CreatedAt { get; private set; }
+
+    private ShortenedUrl()
+    {
+        // EF Core
+    }
 
     public ShortenedUrl( string code, string originalUrl, DateTimeOffset createdAt)
     {
@@ -21,6 +26,8 @@ public class ShortenedUrl
 
     private static bool IsValidUrl(string url)
     {
-        return Uri.TryCreate(url, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+        return Uri.TryCreate(url, UriKind.Absolute, out var uri)
+               && (uri.Scheme == Uri.UriSchemeHttp
+                   || uri.Scheme == Uri.UriSchemeHttps);
     }
 }

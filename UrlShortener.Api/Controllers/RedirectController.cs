@@ -14,9 +14,14 @@ public class RedirectController : ControllerBase
     }
 
     [HttpGet("/{code}")]
-    public IActionResult RedirectToOriginal(string code)
+    public async Task<IActionResult> RedirectToOriginal(
+        string code,
+        CancellationToken cancellationToken)
     {
-        var shortenedUrl = _getUseCase.Execute(code);
+        var shortenedUrl = await _getUseCase.ExecuteAsync(
+            code,
+            cancellationToken
+        );
 
         if (shortenedUrl is null)
         {

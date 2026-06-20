@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using UrlShortener.Application.Abstractions;
 using UrlShortener.Application.UseCases;
+using UrlShortener.Infrastructure.Persistence;
 using UrlShortener.Infrastructure.Repositories;
 using UrlShortener.Infrastructure.Services;
 
@@ -8,9 +10,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.AddSingleton<IShortenedUrlRepository, InMemoryShortenedUrlRepository>();
+builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
+{
+    var connectionString = builder.Configuration
+        .GetConnectionString("DefaultConnection");
 
-builder.Services.AddSingleton<IShortCodeGenerator, RandomShortCodeGenerator>();
+    options.UseNpgsql(connectionString);
+});
+
+builder.Services.AddScoped<IShortenedUrlRepository,
+    PostgresShortenedUrlRepository>();
+
+builder.Services.AddSingleton<IShortCodeGenerator,
+    RandomShortCodeGenerator>();
 
 builder.Services.AddSingleton(TimeProvider.System);
 

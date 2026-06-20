@@ -11,13 +11,19 @@ public class CreateShortenedUrlUseCase
     private readonly IShortCodeGenerator _codeGenerator;
     private readonly TimeProvider _timeProvider;
 
-    public CreateShortenedUrlUseCase( IShortenedUrlRepository repository, IShortCodeGenerator codeGenerator, TimeProvider timeProvider){
+    public CreateShortenedUrlUseCase(
+        IShortenedUrlRepository repository,
+        IShortCodeGenerator codeGenerator,
+        TimeProvider timeProvider)
+    {
         _repository = repository;
         _codeGenerator = codeGenerator;
         _timeProvider = timeProvider;
     }
 
-    public ShortenedUrl Execute(string originalUrl)
+    public async Task<ShortenedUrl> ExecuteAsync(
+        string originalUrl,
+        CancellationToken cancellationToken = default)
     {
         for (var attempt = 0; attempt < MaximumAttempts; attempt++)
         {
@@ -29,7 +35,7 @@ public class CreateShortenedUrlUseCase
                 _timeProvider.GetUtcNow()
             );
 
-            if (_repository.Add(shortenedUrl))
+            if (await _repository.AddAsync(shortenedUrl, cancellationToken))
                 return shortenedUrl;
         }
 
