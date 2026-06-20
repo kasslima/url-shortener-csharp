@@ -1,0 +1,15 @@
+**/bin
+**/obj
+.git
+.gitignore
+.vs
+.vscode
+.idea
+TestResults
+coverage
+*.user
+*.suo
+*.log
+.env
+.env.*
+README.md
