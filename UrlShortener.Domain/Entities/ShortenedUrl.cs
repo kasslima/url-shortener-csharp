@@ -4,6 +4,7 @@ public class ShortenedUrl
 {
     public string Code { get; private set; } = string.Empty;
     public string OriginalUrl { get; private set; } = string.Empty;
+    public int AccessCount { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
 
     private ShortenedUrl()
@@ -29,5 +30,10 @@ public class ShortenedUrl
         return Uri.TryCreate(url, UriKind.Absolute, out var uri)
                && (uri.Scheme == Uri.UriSchemeHttp
                    || uri.Scheme == Uri.UriSchemeHttps);
+    }
+
+    public void IncrementAccessCount()
+    {
+        AccessCount++;
     }
 }

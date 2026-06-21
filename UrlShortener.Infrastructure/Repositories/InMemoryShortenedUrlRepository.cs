@@ -28,4 +28,14 @@ public class InMemoryShortenedUrlRepository : IShortenedUrlRepository
 
         return Task.FromResult(deleted);
     }
+
+    public Task<bool> IncrementAccessCountAsync( string code, CancellationToken cancellationToken = default)
+    {
+        if (!_urls.TryGetValue(code, out var shortenedUrl))
+            return Task.FromResult(false);
+
+        shortenedUrl.IncrementAccessCount();
+
+        return Task.FromResult(true);
+    }
 }

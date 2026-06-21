@@ -12,10 +12,15 @@ public class GetShortenedUrlUseCase
         _repository = repository;
     }
 
-    public Task<ShortenedUrl?> ExecuteAsync(
-        string code,
-        CancellationToken cancellationToken = default)
+    public async Task<ShortenedUrl?> ExecuteAsync( string code, CancellationToken cancellationToken = default)
     {
-        return _repository.GetByCodeAsync(code, cancellationToken);
+       var shortenedUrl = await _repository.GetByCodeAsync(code, cancellationToken);
+
+       if (shortenedUrl is null)
+            return null;
+
+        await _repository.IncrementAccessCountAsync(code, cancellationToken);
+
+        return shortenedUrl;
     }
 }

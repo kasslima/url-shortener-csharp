@@ -32,13 +32,30 @@ public class PostgresShortenedUrlRepository : IShortenedUrlRepository
         return true;
     }
 
-    public Task<ShortenedUrl?> GetByCodeAsync(
+    public async Task<ShortenedUrl?> GetByCodeAsync(
         string code,
         CancellationToken cancellationToken = default)
     {
-        return _dbContext.ShortenedUrls
+        return await _dbContext.ShortenedUrls
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Code == code, cancellationToken);
+    }
+
+    public async Task<bool> IncrementAccessCountAsync(
+        string code,
+        CancellationToken cancellationToken = default)
+    {
+        var shortenedUrl = await _dbContext.ShortenedUrls
+            .FirstOrDefaultAsync(x => x.Code == code, cancellationToken);
+
+        if (shortenedUrl is null)
+            return false;
+
+        shortenedUrl.IncrementAccessCount();
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return true;
     }
 
     public async Task<bool> DeleteAsync(

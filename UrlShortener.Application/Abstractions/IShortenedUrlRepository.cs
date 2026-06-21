@@ -9,4 +9,7 @@ public interface IShortenedUrlRepository
     Task<ShortenedUrl?> GetByCodeAsync( string code, CancellationToken cancellationToken = default);
 
     Task<bool> DeleteAsync( string code, CancellationToken cancellationToken = default);
+
+    Task<bool> IncrementAccessCountAsync(string code, CancellationToken cancellationToken = default);
+    
 }
