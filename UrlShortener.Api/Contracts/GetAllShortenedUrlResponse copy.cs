@@ -1,6 +1,6 @@
 ﻿namespace UrlShortener.Api.Contracts;
 
-public record CreateShortenedUrlResponse(
+public record GetAllShortenedUrlResponse(
     string Code,
     string OriginalUrl,
     string ShortUrl,

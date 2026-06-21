@@ -9,10 +9,12 @@ namespace UrlShortener.Api.Controllers;
 public class UrlsController : ControllerBase
 {
     private readonly CreateShortenedUrlUseCase _createUseCase;
+    private readonly GetAllShortenedUrlUseCase _getAllUseCase;
 
-    public UrlsController(CreateShortenedUrlUseCase createUseCase)
+    public UrlsController(CreateShortenedUrlUseCase createUseCase, GetAllShortenedUrlUseCase getAllUseCase)
     {
         _createUseCase = createUseCase;
+        _getAllUseCase = getAllUseCase;
     }
 
     [HttpPost]
@@ -34,10 +36,34 @@ public class UrlsController : ControllerBase
                 shortenedUrl.Code,
                 shortenedUrl.OriginalUrl,
                 shortUrl,
+                shortenedUrl.AccessCount,
                 shortenedUrl.CreatedAt
             );
 
             return StatusCode(StatusCodes.Status201Created, response);
+        }
+        catch (ArgumentException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var shortenedUrls = await _getAllUseCase.ExecuteAsync(cancellationToken);
+
+            var response = shortenedUrls.Select(x => new GetAllShortenedUrlResponse(
+                x.Code,
+                x.OriginalUrl,
+                $"{Request.Scheme}://{Request.Host}/{x.Code}",
+                x.AccessCount,
+                x.CreatedAt
+            ));
+
+            return Ok(response);
         }
         catch (ArgumentException exception)
         {

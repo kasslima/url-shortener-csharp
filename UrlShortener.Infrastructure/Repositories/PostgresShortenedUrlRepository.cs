@@ -74,4 +74,11 @@ public class PostgresShortenedUrlRepository : IShortenedUrlRepository
 
         return true;
     }
+
+    public async Task<IEnumerable<ShortenedUrl>> GetAllCodesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.ShortenedUrls
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
 }

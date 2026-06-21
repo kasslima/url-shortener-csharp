@@ -11,5 +11,7 @@ public interface IShortenedUrlRepository
     Task<bool> DeleteAsync( string code, CancellationToken cancellationToken = default);
 
     Task<bool> IncrementAccessCountAsync(string code, CancellationToken cancellationToken = default);
+
+    Task<IEnumerable<ShortenedUrl>> GetAllCodesAsync(CancellationToken cancellationToken = default);
     
 }

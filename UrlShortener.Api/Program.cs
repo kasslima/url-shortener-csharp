@@ -27,6 +27,7 @@ builder.Services.AddSingleton<IShortCodeGenerator,
 builder.Services.AddSingleton(TimeProvider.System);
 
 builder.Services.AddScoped<CreateShortenedUrlUseCase>();
+builder.Services.AddScoped<GetAllShortenedUrlUseCase>();
 builder.Services.AddScoped<GetShortenedUrlUseCase>();
 
 var app = builder.Build();

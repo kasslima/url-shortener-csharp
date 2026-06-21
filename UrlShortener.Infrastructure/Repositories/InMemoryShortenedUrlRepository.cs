@@ -38,4 +38,9 @@ public class InMemoryShortenedUrlRepository : IShortenedUrlRepository
 
         return Task.FromResult(true);
     }
+
+    public Task<IEnumerable<ShortenedUrl>> GetAllCodesAsync(CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(_urls.Values.AsEnumerable());
+    }
 }
