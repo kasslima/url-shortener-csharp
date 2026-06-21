@@ -34,6 +34,10 @@ public class UrlShortenerDbContext : DbContext
             entity.Property(x => x.CreatedAt)
                 .HasColumnName("created_at")
                 .IsRequired();
+                
+            entity.Property(x => x.AccessCount)
+                .HasColumnName("access_count")
+                .HasDefaultValue(0);
         });
     }
 }
